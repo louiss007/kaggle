@@ -1,0 +1,71 @@
+# para for binary-class classification
+binary-class:
+  booster: gbtree
+  objective: binary:logistic
+  eval_metric: auc
+  max_depth: 4
+  lambda: 10
+  subsample: 0.75
+  colsample_bytree: 0.75
+  min_child_weight: 2
+  eta: 0.05
+  seed: 0
+  nthread: 8
+  silent: 0
+
+# para for multi-class classification
+multi-class:
+  booster: gbtree
+  objective: multi:softmax    # 多分类的问题
+  num_class: 10               # 类别数，与 multisoftmax 并用
+  gamma: 0.1                  # 用于控制是否后剪枝的参数,越大越保守，一般0.1、0.2这样子。
+  max_depth: 8               # 构建树的深度，越大越容易过拟合
+  lambda: 2                   # 控制模型复杂度的权重值的L2正则化项参数，参数越大，模型越不容易过拟合。
+  subsample: 0.7              # 随机采样训练样本
+  colsample_bytree: 0.7       # 生成树时进行的列采样
+  min_child_weight: 3
+  silent: 1                   # 设置成1则没有运行信息输出，最好是设置为0.
+  eta: 0.007                  # 如同学习率
+  seed: 1000
+  nthread: 4                  # cpu 线程数
+
+# para for regression task
+regression:
+  booster: gbtree
+  objective: reg:linear
+  eval_metric: rmse
+  max_depth: 4
+  lambda: 10
+  subsample: 0.75
+  colsample_bytree: 0.75
+  min_child_weight: 2
+  eta: 0.025
+  seed: 0
+  nthread: 8
+  silent: 1
+
+# para for learning to rank problem
+ltor:
+  booster: gbtree
+  objective: rank:pairwise
+  eval_metric: ndcg
+  max_depth: 4
+  lambda: 10
+  subsample: 0.75
+  colsample_bytree: 0.75
+  min_child_weight: 2
+  eta: 0.025
+  seed: 0
+  nthread: 8
+  silent: 1
+
+
+# data for model
+data:
+  data_path: /home/louiss007/MyWorkShop/dataset/tencent/2020/feat
+
+
+# model path
+model:
+  model_path: /home/louiss007/MyWorkShop/project/algorithm/work_use/rank/gbdt/model
+  dump_path: /home/louiss007/MyWorkShop/project/algorithm/work_use/rank/gbdt/dump
