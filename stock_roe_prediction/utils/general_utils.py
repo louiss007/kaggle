@@ -13,8 +13,9 @@ import codecs
 import yaml
 
 
-def load_data():
-    pass
+def load_data(infile):
+    df = pd.read_csv(infile)
+    return df
 
 
 def read_conf(infile):

@@ -60,12 +60,12 @@ ltor:
   silent: 1
 
 
-# data for model
+# data for input
 data:
-  data_path: /home/louiss007/MyWorkShop/dataset/tencent/2020/feat
+  data_path: ../data/ubiquant-market-prediction
 
 
 # model path
 model:
-  model_path: /home/louiss007/MyWorkShop/project/algorithm/work_use/rank/gbdt/model
-  dump_path: /home/louiss007/MyWorkShop/project/algorithm/work_use/rank/gbdt/dump
+  model_path: ../out/xgb/binary
+  dump_path: ../out/xgb/dump

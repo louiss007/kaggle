@@ -9,6 +9,7 @@
 """
 from utils.general_utils import *
 from xgb_model import xgb_model
+from lgb_model import lgb_model
 import sys
 
 """
@@ -16,18 +17,31 @@ import sys
 """
 
 
-def run():
-    xgb = xgb_model
-    conf = sys.argv[1]
-    para_map = read_conf(conf)
-    model_para = para_map.get('binary-class')
-    data_path = para_map.get('data')
-    model_path = para_map.get('model')
-    xgb.fit(model_para, data_path, model_path)
+def run(model_type):
+
+    if model_type == 'xgb':
+        # conf = sys.argv[1]
+        conf = '../conf/xgb_conf.yaml'
+        para_map = read_conf(conf)
+        # model_para = para_map.get('binary-class')
+        model_para = para_map.get('regression')
+        data_path = para_map.get('data')
+        model_path = para_map.get('model')
+        xgb = xgb_model(model_para, model_path)
+        xgb.fit_delta(data_path)
+
+    if model_type == 'lgb':
+        # conf = sys.argv[1]
+        conf = '../conf/lgb_conf.yaml'
+        para_map = read_conf(conf)
+        # model_para = para_map.get('binary-class')
+        model_para = para_map.get('regression')
+        data_path = para_map.get('data')
+        model_path = para_map.get('model')
+        lgb = lgb_model(model_para, model_path)
+        lgb.fit_delta(data_path)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("usage: python %s conf" % __file__)
-        sys.exit()
-    run()
+    model_type = 'lgb'
+    run(model_type)

@@ -1,0 +1,57 @@
+# para for binary-class classification task
+binary-class:
+  boosting: gbdt
+  objective: binary
+  learning_rate: 0.005
+  num_leaves: 80
+  max_depth: 7
+  min_data_in_leaf: 20
+  subsample: 1.0
+  colsample_bytree: 0.7
+  metric: ['auc', 'binary_logloss']
+
+# para for multi-class classification task
+multi-class:
+  boosting: gbdt
+  objective: multiclass
+  learning_rate: 0.005
+  num_leaves: 80
+  max_depth: 7
+  min_data_in_leaf: 20
+  subsample: 1.0
+  colsample_bytree: 0.7
+  metric: ['auc', 'multi_logloss']
+
+# para for regression task
+regression:
+  boosting: gbdt
+  objective: regression
+  learning_rate: 0.005
+  num_leaves: 80
+  max_depth: 7
+  min_data_in_leaf: 20
+  subsample: 1.0
+  colsample_bytree: 0.7
+  metric: rmse
+
+# para for learning to rank problem
+ltor:
+  boosting: gbdt
+  objective: lambdarank
+  learning_rate: 0.005
+  num_leaves: 80
+  max_depth: 7
+  min_data_in_leaf: 20
+  subsample: 1.0
+  colsample_bytree: 0.7
+  metric: ndcg
+
+# data for input
+data:
+  data_path: ../data/ubiquant-market-prediction
+
+
+# model path
+model:
+  model_path: ../out/lgb/txt
+  dump_path: ../out/lgb/dump
