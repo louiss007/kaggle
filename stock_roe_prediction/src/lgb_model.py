@@ -15,7 +15,7 @@ from utils.general_utils import load_data
 from sklearn.model_selection import GroupKFold
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import graphviz
+# import graphviz
 
 
 class lgb_model:

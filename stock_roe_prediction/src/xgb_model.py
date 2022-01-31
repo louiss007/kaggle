@@ -15,7 +15,7 @@ from utils.general_utils import load_data
 from sklearn.model_selection import GroupKFold
 from sklearn.model_selection import train_test_split
 import pandas as pd
-import graphviz
+# import graphviz
 
 
 class xgb_model:
@@ -71,11 +71,11 @@ class xgb_model:
         deval = xgb.DMatrix(X_v, label=y_v)
         train_size = len(train)
         batch_size = 100000
-        epochs = train_size // batch_size
+        steps = train_size // batch_size
         num_round = 20
         model_bin = "{mp}/xgb_model.bin".format(mp=self.model_map.get('model_path'))
-        for i in range(epochs+1):
-            print(f"===============epoche:{i}=================")
+        for i in range(steps+1):
+            print(f"===============step:{i}=================")
             batch_data = self.make_one_batch(batch_size, i, train, train_size)
             X_t = batch_data[feats]
             y_t = batch_data[target]

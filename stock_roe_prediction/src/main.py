@@ -17,7 +17,13 @@ import sys
 """
 
 
-def run(model_type):
+def run(model_type, task_type=None):
+    """
+    模型训练程序运行入口
+    :param model_type: 具体机器学习模型或者深度学习模型
+    :param task_type: 分类、回归或者排序
+    :return: null
+    """
 
     if model_type == 'xgb':
         # conf = sys.argv[1]
@@ -41,7 +47,12 @@ def run(model_type):
         lgb = lgb_model(model_para, model_path)
         lgb.fit_delta(data_path)
 
+    if model_type == 'fnn':
+        conf = '../conf/nn_conf.yaml'
+        para_map = read_conf(conf)
+        nn_paras = para_map.get(model_type)
+
 
 if __name__ == '__main__':
-    model_type = 'lgb'
+    model_type = 'fnn'
     run(model_type)
