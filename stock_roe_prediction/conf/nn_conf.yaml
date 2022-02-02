@@ -25,3 +25,10 @@ bilstm:
 
 # gated recurrent unit
 gru:
+
+in:
+  data_path: ../data/ubiquant-market-prediction
+
+out:
+  model_path: ../out
+  dump_path: ../out

@@ -26,4 +26,10 @@ def read_conf(infile):
     return para_map
 
 
+def get_data(data_map):
+    train_data = "{dp}/train.csv".format(dp=data_map.get('data_path'))
+    target = 'target'
+    df = load_data(train_data)
+    feats = df.filter(like="f_").columns.tolist()
+    return df, feats, target
 

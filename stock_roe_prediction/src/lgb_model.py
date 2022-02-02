@@ -20,27 +20,22 @@ import pandas as pd
 
 class lgb_model:
 
-    def __init__(self, param, model_map):
+    def __init__(self, param, out_para):
         self.param = param
-        self.model_map = model_map
+        self.out_para = out_para
 
-    def fit(self, data_map):
+    def fit(self, data, feats, target):
         """
-        :param param:
-        :param data_map:
-        :param model_map:
+        compare train loss with test loss,
+        judge for overfitting or underfitting
+        :param data:
+        :param feats:
+        :param target:
         :return:
-        compare train loss with test loss, judge for overfitting or underfitting
         """
-
-        train_data = "{dp}/train_small.csv".format(dp=data_map.get('data_path'))
-        # eval_feat = "{dp}/bin_featb.dat".format(dp=data_map.get('data_path'))
-        target = 'target'
-        df = load_data(train_data)
-        feats = df.filter(like="f_").columns.tolist()
-        X = df[feats]
-        y = df[target]
-        groups = df['time_id']
+        X = data[feats]
+        y = data[target]
+        groups = data['time_id']
         kfold = GroupKFold(n_splits=10)
         num_round = 50
         for fold, (t_ind, v_ind) in enumerate(kfold.split(X, y, groups)):
@@ -50,7 +45,7 @@ class lgb_model:
             dtrain = lgb.Dataset(X_t, label=y_t)
             deval = lgb.Dataset(X_v, label=y_v)
             bst = lgb.train(self.param, dtrain, num_round, verbose_eval=1, valid_sets=deval)
-            model_txt = "{mp}/lgb_model_{f}.txt".format(mp=self.model_map.get('model_path'), f=fold)
+            model_txt = "{mp}/lgb_model_{f}.txt".format(mp=self.out_para.get('model_path'), f=fold)
             # xgb.to_graphviz(bst, num_trees=0)
             bst.save_model(model_txt)
             # dump_path = model_map.get('dump_path')
@@ -58,21 +53,23 @@ class lgb_model:
             # feature_importance(bst)
         # return bst
 
-    def fit_delta(self, data_map):
-        train_data = "{dp}/train.csv".format(dp=data_map.get('data_path'))
-        # eval_feat = "{dp}/bin_featb.dat".format(dp=data_map.get('data_path'))
-        target = 'target'
-        df = load_data(train_data)
-        feats = df.filter(like="f_").columns.tolist()
-        train, val = train_test_split(df, test_size=0.2, random_state=1)
+    def fit_delta(self, data, feats, target):
+        """
+        not online learning mode, because data contains all samples
+        :param data: dataframe format
+        :param feats:
+        :param target:
+        :return:
+        """
+        train, val = train_test_split(data, test_size=0.2, random_state=1)
+        train_size = len(train)
         X_v = val[feats]
         y_v = val[target]
         deval = lgb.Dataset(X_v, label=y_v, free_raw_data=False)
-        train_size = len(train)
         batch_size = 100000
         epochs = train_size // batch_size
         num_round = 20
-        model_txt = "{mp}/xgb_model.txt".format(mp=self.model_map.get('model_path'))
+        model_txt = "{mp}/xgb_model.txt".format(mp=self.out_para.get('model_path'))
         bst = None
         for i in range(epochs+1):
             print(f"===============epoche:{i}=================")

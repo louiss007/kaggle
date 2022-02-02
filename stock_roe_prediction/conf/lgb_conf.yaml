@@ -47,11 +47,11 @@ ltor:
   metric: ndcg
 
 # data for input
-data:
+in:
   data_path: ../data/ubiquant-market-prediction
 
 
 # model path
-model:
+out:
   model_path: ../out/lgb/txt
   dump_path: ../out/lgb/dump

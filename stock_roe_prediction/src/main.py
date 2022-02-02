@@ -10,7 +10,7 @@
 from utils.general_utils import *
 from xgb_model import xgb_model
 from lgb_model import lgb_model
-import sys
+from nn_model import nn_model
 
 """
 程序运行入口
@@ -31,10 +31,11 @@ def run(model_type, task_type=None):
         para_map = read_conf(conf)
         # model_para = para_map.get('binary-class')
         model_para = para_map.get('regression')
-        data_path = para_map.get('data')
-        model_path = para_map.get('model')
-        xgb = xgb_model(model_para, model_path)
-        xgb.fit_delta(data_path)
+        in_para = para_map.get('in')
+        out_para = para_map.get('out')
+        xgb = xgb_model(model_para, out_para)
+        data, feats, target = get_data(in_para)
+        xgb.fit_delta(data, feats, target)
 
     if model_type == 'lgb':
         # conf = sys.argv[1]
@@ -42,15 +43,24 @@ def run(model_type, task_type=None):
         para_map = read_conf(conf)
         # model_para = para_map.get('binary-class')
         model_para = para_map.get('regression')
-        data_path = para_map.get('data')
-        model_path = para_map.get('model')
-        lgb = lgb_model(model_para, model_path)
-        lgb.fit_delta(data_path)
+        in_para = para_map.get('in')
+        out_para = para_map.get('out')
+        lgb = lgb_model(model_para, out_para)
+        data, feats, target = get_data(in_para)
+        lgb.fit_delta(data, feats, target)
 
     if model_type == 'fnn':
         conf = '../conf/nn_conf.yaml'
         para_map = read_conf(conf)
-        nn_paras = para_map.get(model_type)
+        nn_para = para_map.get(model_type)
+        in_para = para_map.get('in')
+        out_para = para_map.get('out')
+        fnn = nn_model(nn_para, out_para)
+        data, feats, target = get_data(in_para)
+
+        input_size = len(feats)
+        nn_para['layers'][0] = input_size
+        fnn.fit(nn_para, out_para)
 
 
 if __name__ == '__main__':
