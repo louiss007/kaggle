@@ -132,3 +132,10 @@ dmypy.json
 
 data/
 train.csv
+train*.tfrecord
+train_small.csv
+train_small.tfrecord
+out/
+*.ckpt*
+checkpoint
+

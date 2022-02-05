@@ -8,7 +8,7 @@ fnn:
   display_step: 100
 
   # network paras
-  layers: [784, 256, 256]
+  layers: [300, 256, 256]
   num_input: 784 # MNIST data input (img shape: 28*28)
   n_hidden_1: 256 # 1st layer number of neurons
   n_hidden_2: 256 # 2nd layer number of neurons
@@ -28,6 +28,8 @@ gru:
 
 in:
   data_path: ../data/ubiquant-market-prediction
+  train_sample_size: 3141410
+  test_sample_size: 200000
 
 out:
   model_path: ../out

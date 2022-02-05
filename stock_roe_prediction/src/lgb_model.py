@@ -67,12 +67,12 @@ class lgb_model:
         y_v = val[target]
         deval = lgb.Dataset(X_v, label=y_v, free_raw_data=False)
         batch_size = 100000
-        epochs = train_size // batch_size
+        steps = train_size // batch_size
         num_round = 20
         model_txt = "{mp}/xgb_model.txt".format(mp=self.out_para.get('model_path'))
         bst = None
-        for i in range(epochs+1):
-            print(f"===============epoche:{i}=================")
+        for i in range(steps+1):
+            print(f"===============step:{i}=================")
             batch_data = self.make_one_batch(batch_size, i, train, train_size)
             X_t = batch_data[feats]
             y_t = batch_data[target]
