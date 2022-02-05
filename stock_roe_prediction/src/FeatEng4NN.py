@@ -114,6 +114,7 @@ if __name__ == '__main__':
     numerical_columns = feat_eng.data_preprocessing_for_numerical(numerical_features)
     columns.extend(categorical_columns)
     columns.extend(numerical_columns)
+    # tf.io.parse_example([], ), 第一个参数要带中括号！！！
     features = tf.io.parse_example([tf_example.SerializeToString()], tf.feature_column.make_parse_example_spec(columns))
     inputs = tf.feature_column.input_layer(features=features, feature_columns=columns)
     print('=======================shape:{}======================'.format(inputs.get_shape()[1]))
@@ -124,4 +125,5 @@ if __name__ == '__main__':
     sess.run(variables_initner)
     sess.run(tables_initner)
     v = sess.run(inputs)
+    sess.close()
     print(v)
