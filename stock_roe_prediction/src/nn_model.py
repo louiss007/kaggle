@@ -14,6 +14,12 @@ import numpy as np
 class nn_model:
 
     def __init__(self, model_para, out_para, task_type=None):
+        """
+        模型构建初始化
+        :param model_para: 模型学习时的超参数
+        :param out_para: 模型输出的参数
+        :param task_type: 分类/回归/排序等
+        """
         self.task_type = task_type
         self.X = None
         self.Y = None
@@ -42,6 +48,11 @@ class nn_model:
             self.loss, self.train_op, self.accuracy = self.bulid_model()
 
     def init_net(self):
+        """
+        与下面的网络结构相对应，是下面网络结构中的权重矩阵定义与数据输入定义，
+        修改下面网络结构时，此函数中对应的权重矩阵也要对应的修改
+        :return:
+        """
         self.layers = [int(i) for i in self.layers]
         self.X = tf.placeholder('float', [None, self.layers[0]])
         self.Y = tf.placeholder('float', [None, self.num_classes])
@@ -58,12 +69,21 @@ class nn_model:
             self.biases['out'] = tf.Variable(tf.random_normal([self.num_classes]))
 
     def neural_network(self, x):
+        """
+        网络结构，正向传播输出，可以替换为其他任意构造的网络结构
+        :param x: input tensor
+        :return: y_hat
+        """
         layer_1 = tf.add(tf.matmul(x, self.weights['h1']), self.biases['b1'])
         layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
         out_layer = tf.matmul(layer_2, self.weights['out']) + self.biases['out']
         return out_layer
 
     def bulid_model(self):
+        """
+        构建模型，损失函数，优化器，学习算子等
+        :return:
+        """
         y_hat = self.neural_network(self.X)
         if self.task_type is None or self.task_type == 'classification':
             self.out = tf.nn.softmax(logits=y_hat)
