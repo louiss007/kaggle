@@ -95,8 +95,8 @@ class nn_model:
             return loss, train_op, accuracy
 
         if self.task_type == 'regression':
-            loss = tf.reduce_mean(tf.square(y_hat - self.Y), keep_dims=False)
-            # loss = tf.square(y_hat - self.Y)
+            loss = tf.reduce_mean(tf.square(y_hat - self.Y))
+            # loss = tf.reduce_mean(tf.square(y_hat - self.Y), keep_dims=False)
             optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
             train_op = optimizer.minimize(loss, global_step=self.global_step)
             self.out = y_hat
