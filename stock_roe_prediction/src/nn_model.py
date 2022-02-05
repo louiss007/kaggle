@@ -103,6 +103,13 @@ class nn_model:
             return loss, train_op
 
     def fit(self, sess, batch_x, batch_y):
+        """
+        learn model, 训练模型
+        :param sess:
+        :param batch_x: 特征
+        :param batch_y: 标签
+        :return:
+        """
         if self.task_type is None or self.task_type == 'classification':
             loss, acc, _, step = sess.run(
                 [self.loss, self.accuracy, self.train_op, self.global_step], feed_dict={
