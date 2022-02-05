@@ -55,13 +55,13 @@ def nn_run(train_files, test_files, model_para, out_para, task_type, is_train=Tr
                     batch_x, batch_y = sess.run([_x, _y])
                     if task_type is None or task_type == 'classification':
                         loss, acc, global_step = model.fit(sess, batch_x, batch_y)
-                        if global_step % 4000 == 0:
+                        if global_step % 2000 == 0:
                             print('==========loss:{0}, acc:{1}, epoch:{2}, global step:{3}======'
                                   .format(loss, acc, epoch, global_step))
                             model.save_model(sess, model.model_path)
                     if task_type == 'regression':
                         loss, global_step = model.fit(sess, batch_x, batch_y)
-                        if global_step % 4000 == 0:
+                        if global_step % 2000 == 0:
                             print('==========loss:{0}, epoch:{1}, global step:{2}======'
                                   .format(loss, epoch, global_step))
                             model.save_model(sess, model.model_path)
