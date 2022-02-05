@@ -126,6 +126,13 @@ class nn_model:
             return loss, step
 
     def predict(self, sess, x, y):
+        """
+        模型预测
+        :param sess:
+        :param x: 特征
+        :param y: y is None
+        :return: y_hat
+        """
         result = sess.run([self.out], feed_dict={
             self.X: x,
             self.Y: y
