@@ -3,7 +3,7 @@
 # -*- coding: utf8 -*-
 # @Author   : louiss007
 # @Time     : 2022/2/1 19:08
-# @FileName : write_tfrecord_for_pic.py
+# @FileName : image_to_tfrecord.py
 # @Email    : quant_master2000@163.com
 ==========================
 """
