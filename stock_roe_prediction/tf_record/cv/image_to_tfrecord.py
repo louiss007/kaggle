@@ -14,13 +14,10 @@ from get_image2label_id import get_image2label_id
 
 flags = tf.app.flags
 flags.DEFINE_string('images_dir',
-                    '../../data/tfrecord/cv/images',
+                    '../../data/17flowers',
                     'path of image')
-flags.DEFINE_string('annotation_path',
-                    '../../data/tfrecord/cv/annotations/annotations.json',
-                    'path of annotation')
 flags.DEFINE_string('record_path',
-                    '../../data/tfrecord/cv/out/train.record',
+                    '../../data/17flowers/train.record',
                     'path of TFRecord')
 FLAGS = flags.FLAGS
 
@@ -102,21 +99,25 @@ def write_tfrecord(annotation_dict, record_path, resize=None):
     print("{} tf_examples has been created successfully, which are saved in {}".format(num_tf_example, record_path))
 
 
-def main():
-    image_class_name2number = {
-        "combinations": 0,
-        "details": 1,
-        "sizes": 2,
-        "tags": 3,
-        "models": 4,
-        "tileds": 5,
-        "hangs": 6
-    }
+def get_image_class2number():
+    image_class2number = {}
+    for i in range(1, 18):
+        image_class2number.setdefault(str(i), i)
+    return image_class2number
+
+
+def display_tfrecord(tfrecord_file):
+    item = next(tf.python_io.tf_record_iterator(tfrecord_file))
+    print(tf.train.Example.FromString(item))
+
+
+def main(_):
+    image_class_name2number = get_image_class2number()
     images_dir = FLAGS.images_dir
-    #annotation_path = FLAGS.annotation_path
     record_path = FLAGS.record_path
     image2label_id = get_image2label_id(images_dir, image_class_name2number)
     write_tfrecord(image2label_id, record_path)
+    # display_tfrecord(record_path)
 
 
 if __name__ == '__main__':
