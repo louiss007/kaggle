@@ -27,6 +27,7 @@ class nn_model:
         self.target = model_para.get('target')
         self.weights = {}
         self.biases = {}
+        self.dropout = model_para.get('dropout')
         self.learning_rate = model_para.get('learning_rate')
         self.epoch = model_para.get('epoch')
         # self.n_step = model_para.get('n_step')
@@ -53,9 +54,8 @@ class nn_model:
         修改下面网络结构时，此函数中对应的权重矩阵也要对应的修改
         :return:
         """
-        self.layers = [int(i) for i in self.layers]
-        self.X = tf.placeholder('float', [None, self.layers[0]])
-        self.Y = tf.placeholder('float', [None, self.num_classes])
+        self.X = tf.placeholder(tf.float32, [None, self.layers[0]])
+        self.Y = tf.placeholder(tf.float32, [None, self.num_classes])
         if len(self.layers) != 1:
             for i in range(1, len(self.layers)):
                 init_method = np.sqrt(2.0 / (self.layers[i - 1] + self.layers[i]))
@@ -163,6 +163,13 @@ class nn_model:
     def make_one_batch(self, tfrecord_files):
         dataset = tf.data.TFRecordDataset(tfrecord_files)
         dataset = dataset.map(self.parse_tfrecord).batch(self.batch_size)
+        iterator = dataset.make_one_shot_iterator()
+        batch_x, batch_y = iterator.get_next()
+        return batch_x, batch_y
+
+    def make_batch(self, tfrecord_files):
+        dataset = tf.data.TFRecordDataset(tfrecord_files)
+        dataset = dataset.map(self.parse_tfrecord).batch(256)
         iterator = dataset.make_one_shot_iterator()
         batch_x, batch_y = iterator.get_next()
         return batch_x, batch_y

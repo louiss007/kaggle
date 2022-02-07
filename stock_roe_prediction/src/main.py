@@ -11,6 +11,7 @@ from utils.general_utils import *
 from xgb_model import xgb_model
 from lgb_model import lgb_model
 from nn_model import nn_model
+from cnn_model import cnn_model
 import sys
 import json
 """
@@ -39,7 +40,7 @@ def get_feat_cols(feat_json_file):
 
 
 def nn_run(train_files, test_files, model_para, out_para, task_type, is_train=True):
-    model = nn_model(model_para, out_para, task_type)
+    model = cnn_model(model_para, out_para, task_type)
     # if not tf.gfile.Exists(model.model_path):
     #     tf.gfile.MakeDirs(model.model_path)
 
@@ -55,16 +56,30 @@ def nn_run(train_files, test_files, model_para, out_para, task_type, is_train=Tr
                     batch_x, batch_y = sess.run([_x, _y])
                     if task_type is None or task_type == 'classification':
                         loss, acc, global_step = model.fit(sess, batch_x, batch_y)
-                        if global_step % 2000 == 0:
-                            print('==========loss:{0}, acc:{1}, epoch:{2}, global step:{3}======'
+                        if global_step % model_para.get('display_step') == 0:
+                            print('==========train loss:{0}, train acc:{1}, epoch:{2}, global step:{3}======'
                                   .format(loss, acc, epoch, global_step))
                             model.save_model(sess, model.model_path)
                     if task_type == 'regression':
                         loss, global_step = model.fit(sess, batch_x, batch_y)
-                        if global_step % 2000 == 0:
-                            print('==========loss:{0}, epoch:{1}, global step:{2}======'
+                        if global_step % model_para.get('display_step') == 0:
+                            print('==========train loss:{0}, epoch:{1}, global step:{2}======'
                                   .format(loss, epoch, global_step))
                             model.save_model(sess, model.model_path)
+
+                print('===========validation start===========')
+                test_x, test_y = model.make_batch(test_files)
+                t_x, t_y = sess.run([test_x, test_y])
+                if task_type is None or task_type == 'classification':
+                    loss, acc, _ = model.fit(sess, t_x, t_y)
+                    print('==========test loss:{0}, test acc:{1}, epoch:{2}======'
+                          .format(loss, acc, epoch))
+                        # model.save_model(sess, model.model_path)
+                if task_type == 'regression':
+                    loss, _ = model.fit(sess, t_x, t_y)
+                    print('==========test loss:{0}, epoch:{1}======'
+                          .format(loss, epoch))
+
         else:
             test_n_step = model.test_sample_size // model.batch_size + 1
             for _ in range(test_n_step):
@@ -112,7 +127,7 @@ def run(model_type, task_type=None):
         nn_para = para_map.get(model_type)
         out_para = para_map.get('out')
         train_sample_size = in_para.get('train_sample_size')
-        train_sample_size -= 200000
+        train_sample_size -= 200000     # only one total dataset
         test_sample_size = in_para.get('test_sample_size')
         # n_step = train_sample_size // nn_para.get('batch_size') + 1
         target = 'target'
@@ -126,9 +141,35 @@ def run(model_type, task_type=None):
         train_files, test_files = get_tfrecord_files(in_para.get('data_path'))
         nn_run(train_files, test_files, nn_para, out_para, task_type)
 
+    if model_type == 'cnn':
+        conf = '../conf/nn_conf.yaml'
+        para_map = read_conf(conf)
+        in_para = para_map.get('cnn_in')
+        nn_para = para_map.get(model_type)
+        out_para = para_map.get('out')
+        train_sample_size = in_para.get('train_sample_size')
+        # train_sample_size -= 200000
+        test_sample_size = in_para.get('test_sample_size')
+        # n_step = train_sample_size // nn_para.get('batch_size') + 1
+        target = 'target'
+        # ds, feats, target = get_dataset(in_para, nn_para.get('batch_size'))
+        # json_file = '{dp}/feat.json'.format(dp=in_para.get('data_path'))
+        # feats = get_feat_cols(json_file)
+        feats = None
+        nn_para.setdefault('feat_cols', feats)
+        nn_para.setdefault('target', target)
+        nn_para.setdefault('train_sample_size', train_sample_size)
+        nn_para.setdefault('test_sample_size', test_sample_size)
+        # train_files, test_files = get_tfrecord_files(in_para.get('data_path'))
+        train_files = '{dp}/train.tfrecord'.format(dp=in_para.get('data_path'))
+        test_files = '{dp}/test.tfrecord'.format(dp=in_para.get('data_path'))
+        nn_run(train_files, test_files, nn_para, out_para, task_type)
+
 
 if __name__ == '__main__':
-    model_type = 'fnn'
+    # model_type = 'fnn'
     # model_type = 'xgb'
     # model_type = 'lgb'
-    run(model_type, 'regression')
+    model_type = 'cnn'
+    # run(model_type, 'regression')
+    run(model_type, 'classification')
