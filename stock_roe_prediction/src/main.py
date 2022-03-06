@@ -12,7 +12,11 @@ from xgb_model import xgb_model
 from lgb_model import lgb_model
 from nn_model import nn_model
 from cnn_model import cnn_model
-import sys
+from rnn_model import rnn_model
+from lstm_model import lstm_model
+from bilstm_model import bilstm_model
+from gru_model import gru_model
+import time
 import json
 """
 程序运行入口
@@ -39,8 +43,8 @@ def get_feat_cols(feat_json_file):
     return feat_cols
 
 
-def nn_run(train_files, test_files, model_para, out_para, task_type, is_train=True):
-    model = cnn_model(model_para, out_para, task_type)
+def nn_run(train_files, test_files, model_para, model, task_type, is_train=True):
+    # model = cnn_model(model_para, out_para, task_type)
     # if not tf.gfile.Exists(model.model_path):
     #     tf.gfile.MakeDirs(model.model_path)
 
@@ -139,7 +143,8 @@ def run(model_type, task_type=None):
         nn_para.setdefault('train_sample_size', train_sample_size)
         nn_para.setdefault('test_sample_size', test_sample_size)
         train_files, test_files = get_tfrecord_files(in_para.get('data_path'))
-        nn_run(train_files, test_files, nn_para, out_para, task_type)
+        model = nn_model(nn_para, out_para, task_type)
+        nn_run(train_files, test_files, nn_para, model, task_type)
 
     if model_type == 'cnn':
         conf = '../conf/nn_conf.yaml'
@@ -163,13 +168,122 @@ def run(model_type, task_type=None):
         # train_files, test_files = get_tfrecord_files(in_para.get('data_path'))
         train_files = '{dp}/train.tfrecord'.format(dp=in_para.get('data_path'))
         test_files = '{dp}/test.tfrecord'.format(dp=in_para.get('data_path'))
-        nn_run(train_files, test_files, nn_para, out_para, task_type)
+        model = cnn_model(nn_para, out_para, task_type)
+        nn_run(train_files, test_files, nn_para, model, task_type)
+
+    if model_type == 'rnn':
+        conf = '../conf/nn_conf.yaml'
+        para_map = read_conf(conf)
+        in_para = para_map.get('rnn_in')
+        nn_para = para_map.get(model_type)
+        out_para = para_map.get('out')
+        train_sample_size = in_para.get('train_sample_size')
+        # train_sample_size -= 200000
+        test_sample_size = in_para.get('test_sample_size')
+        # n_step = train_sample_size // nn_para.get('batch_size') + 1
+        target = 'target'
+        # ds, feats, target = get_dataset(in_para, nn_para.get('batch_size'))
+        # json_file = '{dp}/feat.json'.format(dp=in_para.get('data_path'))
+        # feats = get_feat_cols(json_file)
+        feats = None
+        nn_para.setdefault('feat_cols', feats)
+        nn_para.setdefault('target', target)
+        nn_para.setdefault('train_sample_size', train_sample_size)
+        nn_para.setdefault('test_sample_size', test_sample_size)
+        # train_files, test_files = get_tfrecord_files(in_para.get('data_path'))
+        train_files = '{dp}/train.tfrecord'.format(dp=in_para.get('data_path'))
+        test_files = '{dp}/test.tfrecord'.format(dp=in_para.get('data_path'))
+        model = rnn_model(nn_para, out_para, task_type)
+        nn_run(train_files, test_files, nn_para, model, task_type)
+
+    if model_type == 'lstm':
+        conf = '../conf/nn_conf.yaml'
+        para_map = read_conf(conf)
+        in_para = para_map.get('lstm_in')
+        nn_para = para_map.get(model_type)
+        out_para = para_map.get('out')
+        train_sample_size = in_para.get('train_sample_size')
+        # train_sample_size -= 200000
+        test_sample_size = in_para.get('test_sample_size')
+        # n_step = train_sample_size // nn_para.get('batch_size') + 1
+        target = 'target'
+        # ds, feats, target = get_dataset(in_para, nn_para.get('batch_size'))
+        # json_file = '{dp}/feat.json'.format(dp=in_para.get('data_path'))
+        # feats = get_feat_cols(json_file)
+        feats = None
+        nn_para.setdefault('feat_cols', feats)
+        nn_para.setdefault('target', target)
+        nn_para.setdefault('train_sample_size', train_sample_size)
+        nn_para.setdefault('test_sample_size', test_sample_size)
+        # train_files, test_files = get_tfrecord_files(in_para.get('data_path'))
+        train_files = '{dp}/train.tfrecord'.format(dp=in_para.get('data_path'))
+        test_files = '{dp}/test.tfrecord'.format(dp=in_para.get('data_path'))
+        model = lstm_model(nn_para, out_para, task_type)
+        nn_run(train_files, test_files, nn_para, model, task_type)
+
+    if model_type == 'bilstm':
+        conf = '../conf/nn_conf.yaml'
+        para_map = read_conf(conf)
+        in_para = para_map.get('bilstm_in')
+        nn_para = para_map.get(model_type)
+        out_para = para_map.get('out')
+        train_sample_size = in_para.get('train_sample_size')
+        # train_sample_size -= 200000
+        test_sample_size = in_para.get('test_sample_size')
+        # n_step = train_sample_size // nn_para.get('batch_size') + 1
+        target = 'target'
+        # ds, feats, target = get_dataset(in_para, nn_para.get('batch_size'))
+        # json_file = '{dp}/feat.json'.format(dp=in_para.get('data_path'))
+        # feats = get_feat_cols(json_file)
+        feats = None
+        nn_para.setdefault('feat_cols', feats)
+        nn_para.setdefault('target', target)
+        nn_para.setdefault('train_sample_size', train_sample_size)
+        nn_para.setdefault('test_sample_size', test_sample_size)
+        # train_files, test_files = get_tfrecord_files(in_para.get('data_path'))
+        train_files = '{dp}/train.tfrecord'.format(dp=in_para.get('data_path'))
+        test_files = '{dp}/test.tfrecord'.format(dp=in_para.get('data_path'))
+        model = bilstm_model(nn_para, out_para, task_type)
+        nn_run(train_files, test_files, nn_para, model, task_type)
+
+    if model_type == 'gru':
+        conf = '../conf/nn_conf.yaml'
+        para_map = read_conf(conf)
+        in_para = para_map.get('gru_in')
+        nn_para = para_map.get(model_type)
+        out_para = para_map.get('out')
+        train_sample_size = in_para.get('train_sample_size')
+        # train_sample_size -= 200000
+        test_sample_size = in_para.get('test_sample_size')
+        # n_step = train_sample_size // nn_para.get('batch_size') + 1
+        target = 'target'
+        # ds, feats, target = get_dataset(in_para, nn_para.get('batch_size'))
+        # json_file = '{dp}/feat.json'.format(dp=in_para.get('data_path'))
+        # feats = get_feat_cols(json_file)
+        feats = None
+        nn_para.setdefault('feat_cols', feats)
+        nn_para.setdefault('target', target)
+        nn_para.setdefault('train_sample_size', train_sample_size)
+        nn_para.setdefault('test_sample_size', test_sample_size)
+        # train_files, test_files = get_tfrecord_files(in_para.get('data_path'))
+        train_files = '{dp}/train.tfrecord'.format(dp=in_para.get('data_path'))
+        test_files = '{dp}/test.tfrecord'.format(dp=in_para.get('data_path'))
+        model = gru_model(nn_para, out_para, task_type)
+        nn_run(train_files, test_files, nn_para, model, task_type)
 
 
 if __name__ == '__main__':
     # model_type = 'fnn'
     # model_type = 'xgb'
     # model_type = 'lgb'
-    model_type = 'cnn'
+    # model_type = 'cnn'
+    model_type = 'rnn'
+    # model_type = 'lstm'
+    # model_type = 'bilstm'
+    # model_type = 'gru'
+    start = time.time()
     # run(model_type, 'regression')
     run(model_type, 'classification')
+    end = time.time()
+    print('elapsed time: %d' % (end-start))
+
