@@ -19,9 +19,9 @@ class bilstm_model(lstm_model):
         self.model_path = '{mp}/nn/bilstm/bilstm'.format(mp=out_para.get('model_path'))
         self.init_net()
         if self.task_type == 'regression':
-            self.loss, self.train_op = self.bulid_model()
+            self.loss, self.train_op = self.build_model()
         else:
-            self.loss, self.train_op, self.accuracy = self.bulid_model()
+            self.loss, self.train_op, self.accuracy = self.build_model()
 
     def init_net(self):
         self.time_steps = 28
@@ -53,41 +53,3 @@ class bilstm_model(lstm_model):
         # Linear activation, using rnn inner loop last output
         out_layer = tf.matmul(outputs[-1], self.weights['out']) + self.biases['out']
         return out_layer
-
-    # def bulid_model(self):
-    #     """
-    #     构建模型，损失函数，优化器，学习算子等
-    #     :return:
-    #     """
-    #     y_hat = self.neural_network(self.X)
-    #     if self.task_type is None or self.task_type == 'classification':
-    #         self.out = tf.nn.softmax(logits=y_hat)
-    #         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_hat, labels=self.Y))
-    #         optimizer = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate)
-    #         train_op = optimizer.minimize(loss, global_step=self.global_step)
-    #         corr_pred = tf.equal(tf.argmax(self.out, 1), tf.argmax(self.Y, 1))
-    #         accuracy = tf.reduce_mean(tf.cast(corr_pred, tf.float32))
-    #         return loss, train_op, accuracy
-    #
-    #     if self.task_type == 'regression':
-    #         loss = tf.reduce_mean(tf.square(y_hat - self.Y))
-    #         # loss = tf.reduce_mean(tf.square(y_hat - self.Y), keep_dims=False)
-    #         optimizer = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate)
-    #         train_op = optimizer.minimize(loss, global_step=self.global_step)
-    #         self.out = y_hat
-    #         return loss, train_op
-    #
-    # def parse_tfrecord(self, tfrecord):
-    #     print("=============bilstm model=================")
-    #     example = tf.parse_single_example(tfrecord, features={
-    #         'image': tf.FixedLenFeature([], tf.string),
-    #         'label': tf.FixedLenFeature([], tf.string),
-    #         'num1': tf.FixedLenFeature([], tf.float32),
-    #         'num2': tf.FixedLenFeature([], tf.int64)
-    #     })
-    #     image = tf.decode_raw(example['image'], tf.float32)
-    #     label = tf.decode_raw(example['label'], tf.float32)
-    #     image = tf.reshape(image, shape=[self.time_steps, self.layers[0]])
-    #     # image = tf.reshape(image, shape=[self.layers[0]])
-    #     label = tf.reshape(label, shape=[self.num_classes])
-    #     return image, label

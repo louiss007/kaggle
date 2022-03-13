@@ -3,7 +3,7 @@
 # -*-coding: utf8-*-
 # @Author  : louiss007
 # @Time    : 22-3-6 下午6:11
-# @FileName: gnn.py
+# @FileName: gnn_model.py
 # @Email   : quant_master2000@163.com
 ======================
 """

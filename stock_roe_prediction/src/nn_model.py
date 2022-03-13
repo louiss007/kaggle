@@ -44,9 +44,9 @@ class nn_model:
         self.out = None
         self.init_net()
         if self.task_type == 'regression':
-            self.loss, self.train_op = self.bulid_model()
+            self.loss, self.train_op = self.build_model()
         else:
-            self.loss, self.train_op, self.accuracy = self.bulid_model()
+            self.loss, self.train_op, self.accuracy = self.build_model()
 
     def init_net(self):
         """
@@ -79,7 +79,7 @@ class nn_model:
         out_layer = tf.matmul(layer_2, self.weights['out']) + self.biases['out']
         return out_layer
 
-    def bulid_model(self):
+    def build_model(self):
         """
         构建模型，损失函数，优化器，学习算子等
         :return:
@@ -173,6 +173,11 @@ class nn_model:
         iterator = dataset.make_one_shot_iterator()
         batch_x, batch_y = iterator.get_next()
         return batch_x, batch_y
+
+    @staticmethod
+    def check_shape(t):
+        print('==========================')
+        print(t.op.name, ' ', t.get_shape().as_list())
 
 
 if __name__ == '__main__':

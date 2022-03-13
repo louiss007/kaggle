@@ -9,7 +9,6 @@
 """
 from nn_model import nn_model
 import tensorflow as tf
-import numpy as np
 
 
 class cnn_model(nn_model):
@@ -28,9 +27,9 @@ class cnn_model(nn_model):
         self.model_path = '{mp}/nn/cnn/cnn'.format(mp=out_para.get('model_path'))
         self.init_net()
         if self.task_type == 'regression':
-            self.loss, self.train_op = self.bulid_model()
+            self.loss, self.train_op = self.build_model()
         else:
-            self.loss, self.train_op, self.accuracy = self.bulid_model()
+            self.loss, self.train_op, self.accuracy = self.build_model()
 
     def init_net(self):
         self.X = tf.placeholder(tf.float32, [None, self.layers[0]])
@@ -90,38 +89,15 @@ class cnn_model(nn_model):
         out = tf.add(tf.matmul(fc1, self.weights['out']), self.biases['out'])
         return out
 
-    # def bulid_model(self):
-    #     """
-    #     构建模型，损失函数，优化器，学习算子等
-    #     :return:
-    #     """
-    #     y_hat = self.neural_network(self.X)
-    #     if self.task_type is None or self.task_type == 'classification':
-    #         self.out = tf.nn.softmax(logits=y_hat)
-    #         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_hat, labels=self.Y))
-    #         optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-    #         train_op = optimizer.minimize(loss, global_step=self.global_step)
-    #         corr_pred = tf.equal(tf.argmax(self.out, 1), tf.argmax(self.Y, 1))
-    #         accuracy = tf.reduce_mean(tf.cast(corr_pred, tf.float32))
-    #         return loss, train_op, accuracy
-    #
-    #     if self.task_type == 'regression':
-    #         loss = tf.reduce_mean(tf.square(y_hat - self.Y))
-    #         # loss = tf.reduce_mean(tf.square(y_hat - self.Y), keep_dims=False)
-    #         optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate)
-    #         train_op = optimizer.minimize(loss, global_step=self.global_step)
-    #         self.out = y_hat
-    #         return loss, train_op
-
-    def conv2d(self, x, W, b, strides=1):
+    def conv2d(self, x, W, b, strides=1, name=None):
         # Conv2D wrapper, with bias and relu activation
-        x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME')
+        x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME', name=name)
         x = tf.nn.bias_add(x, b)
         return tf.nn.relu(x)
 
-    def maxpool2d(self, x, k=2):
+    def maxpool2d(self, x, k=2, name=None):
         # MaxPool2D wrapper
-        return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
+        return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME', name=name)
 
     def parse_tfrecord(self, tfrecord):
         example = tf.parse_single_example(tfrecord, features={

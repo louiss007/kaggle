@@ -26,9 +26,9 @@ class rnn_model(nn_model):
         self.model_path = '{mp}/nn/rnn/rnn'.format(mp=out_para.get('model_path'))
         self.init_net()
         if self.task_type == 'regression':
-            self.loss, self.train_op = self.bulid_model()
+            self.loss, self.train_op = self.build_model()
         else:
-            self.loss, self.train_op, self.accuracy = self.bulid_model()
+            self.loss, self.train_op, self.accuracy = self.build_model()
 
     def init_net(self):
         self.time_steps = 28
@@ -55,9 +55,10 @@ class rnn_model(nn_model):
         out_layer = tf.matmul(outputs[-1], self.weights['out']) + self.biases['out']
         return out_layer
 
-    def bulid_model(self):
+    def build_model(self):
         """
         构建模型，损失函数，优化器，学习算子等
+        Optimizer is different from super class
         :return:
         """
         y_hat = self.neural_network(self.X)
