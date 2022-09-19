@@ -9,7 +9,7 @@
 """
 import tensorflow as tf
 import numpy as np
-from gan_model import gan_model
+from dnn.gan_model import gan_model
 
 
 class dcgan_model(gan_model):

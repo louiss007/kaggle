@@ -8,7 +8,7 @@
 ======================
 """
 import tensorflow as tf
-from cnn_model import cnn_model
+from dnn.cnn_model import cnn_model
 
 
 class alexnet_model(cnn_model):

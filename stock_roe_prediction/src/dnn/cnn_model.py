@@ -7,7 +7,7 @@
 # @Email   : quant_master2000@163.com
 ======================
 """
-from nn_model import nn_model
+from dnn.nn_model import nn_model
 import tensorflow as tf
 
 

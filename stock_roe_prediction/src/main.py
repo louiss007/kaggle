@@ -8,17 +8,17 @@
 ==========================
 """
 from utils.general_utils import *
-from xgb_model import xgb_model
-from lgb_model import lgb_model
-from nn_model import nn_model
-from cnn_model import cnn_model
-from alexnet_model import alexnet_model
-from rnn_model import rnn_model
-from lstm_model import lstm_model
-from bilstm_model import bilstm_model
-from gru_model import gru_model
-from gan_model import gan_model
-from dcgan_model import dcgan_model
+from ml.xgb_model import xgb_model
+from ml.lgb_model import lgb_model
+from dnn.nn_model import nn_model
+from dnn.cnn_model import cnn_model
+from cv.alexnet_model import alexnet_model
+from dnn.rnn_model import rnn_model
+from dnn.lstm_model import lstm_model
+from dnn.bilstm_model import bilstm_model
+from dnn.gru_model import gru_model
+from dnn.gan_model import gan_model
+from dnn.dcgan_model import dcgan_model
 # from dcgan_model_v2 import dcgan_model
 import time
 import json

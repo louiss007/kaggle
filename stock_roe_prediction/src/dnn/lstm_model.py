@@ -2,28 +2,27 @@
 ======================
 # -*-coding: utf8-*-
 # @Author  : louiss007
-# @Time    : 22-3-6 下午9:31
-# @FileName: rnn_model.py
+# @Time    : 22-1-23 下午9:00
+# @FileName: lstm_model.py
 # @Email   : quant_master2000@163.com
 ======================
 """
-
-from nn_model import nn_model
+from dnn.nn_model import nn_model
 import tensorflow as tf
 
 
-class rnn_model(nn_model):
+class lstm_model(nn_model):
 
     def __init__(self, model_para, out_para, task_type=None):
         """
-        模型构建初始化, Vanilla RNN
+        模型构建初始化
         :param model_para:
         :param out_para:
         :param task_type:
         """
         nn_model.__init__(self, model_para, out_para, task_type)
         self.time_steps = None
-        self.model_path = '{mp}/nn/rnn/rnn'.format(mp=out_para.get('model_path'))
+        self.model_path = '{mp}/nn/lstm/lstm'.format(mp=out_para.get('model_path'))
         self.init_net()
         if self.task_type == 'regression':
             self.loss, self.train_op = self.build_model()
@@ -42,14 +41,18 @@ class rnn_model(nn_model):
         }
 
     def neural_network(self, x):
+        # Prepare data shape to match `rnn` function requirements
+        # Current data input shape: (batch_size, timesteps, n_input)
+        # Required shape: 'timesteps' tensors list of shape (batch_size, n_input)
+
         # Unstack to get a list of 'timesteps' tensors of shape (batch_size, n_input)
         x = tf.unstack(x, self.time_steps, 1)
 
         # Define a lstm cell with tensorflow
-        rnn_cell = tf.nn.rnn_cell.BasicRNNCell(self.layers[1], reuse=tf.AUTO_REUSE)
+        lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(self.layers[1], forget_bias=1.0, reuse=tf.AUTO_REUSE)
 
         # Get lstm cell output
-        outputs, states = tf.nn.static_rnn(rnn_cell, x, dtype=tf.float32)  # ?*128
+        outputs, states = tf.nn.static_rnn(lstm_cell, x, dtype=tf.float32)  # ?*128
 
         # Linear activation, using rnn inner loop last output
         out_layer = tf.matmul(outputs[-1], self.weights['out']) + self.biases['out']
