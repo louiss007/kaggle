@@ -76,7 +76,7 @@ def load_tfrecord(tfrecord_file_path, batch_size, height, width, channels, n_cla
 
 
 def display_tfrecord(tfrecord_file):
-    item = next(tf.python_io.tf_record_iterator(tfrecord_file))
+    item = next(tf.io.tf_record_iterator(tfrecord_file))
     print(tf.train.Example.FromString(item))
 
 
